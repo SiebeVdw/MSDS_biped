@@ -63,15 +63,15 @@ def optimizer(N, L, T, ratio = 0.5, initial_guess = None):
     opti.subject_to(Q[:, 0] == heelstrike_casadi(M, Q[:5, -1], Q[5:, -1]))
 
     # # BC3: postion of all joints above ground at all times
-    # opti.subject_to(y_E(Q[:5, :]) > 0.0)
-    # opti.subject_to(y_B(Q[:5, :]) > 0.0)
-    # opti.subject_to(y_C(Q[:5, :]) > 0.0)
-    # opti.subject_to(y_D(Q[:5, :]) > 0.0)
-    # opti.subject_to(y_F(Q[:5, :]) > 0.0)
+    opti.subject_to(y_E(Q[:5, :]) > 0.0)
+    opti.subject_to(y_B(Q[:5, :]) > 0.0)
+    opti.subject_to(y_C(Q[:5, :]) > 0.0)
+    opti.subject_to(y_D(Q[:5, :]) > 0.0)
+    opti.subject_to(y_F(Q[:5, :]) > 0.0)
 
     # # BC4: no overextended knees (Q3 and Q4)
-    # opti.subject_to(Q[2, :] <= 0.0)
-    # opti.subject_to(Q[3, :] <= 0.0)
+    opti.subject_to(Q[2, :] <= 0.0)
+    opti.subject_to(Q[3, :] <= 0.0)
     # opti.subject_to(Q[2, :] >= -np.pi/2)
     # opti.subject_to(Q[3, :] >= -np.pi/2)
 
@@ -119,20 +119,22 @@ if __name__ == "__main__":
     ratio = 0.5
     # initial_guess = np.load('gait_optimization_results/guessQ.npy')
     initial_guess = None
-    filename = 'name'
+    filename = 'no_overextended_knees'
 
     # run optimizer
-    Q, U, E = optimizer(N, L, T, ratio, initial_guess)
+    # Q, U, E = optimizer(N, L, T, ratio, initial_guess)
 
     # save values for Q, U and E in gait_optimization_results
-    np.save('gait_optimization_results/' + filename + '_Q' + '.npy', Q)
-    np.save('gait_optimization_results/' + filename + '_U' + '.npy', U)
-    np.save('gait_optimization_results/' + filename + '_E' + '.npy', E)
+    # np.save('gait_optimization_results/' + filename + '_Q' + '.npy', Q)
+    # np.save('gait_optimization_results/' + filename + '_U' + '.npy', U)
+    # np.save('gait_optimization_results/' + filename + '_E' + '.npy', E)
 
+    Q = np.load('gait_optimization_results/' + filename + '_Q' + '.npy')
+    U = np.load('gait_optimization_results/' + filename + '_U' + '.npy')
+    E = np.load('gait_optimization_results/' + filename + '_E' + '.npy')
 
-
-
-
+    ### print energy ###
+    print(f" \n The total energy is Energy: {E} \n\n")
 
     ### make animation ###
     _, _, _, _, _, x, xd = lag_eq(ratio)
@@ -178,3 +180,18 @@ if __name__ == "__main__":
     # save animation in a map named gifs
     print(f"gait_optimization_gifs/ratio_{str(ratio)[2:]}_{filename}.gif")
     ani.save(f"gait_optimization_gifs/ratio_{str(ratio)[2:]}_{filename}.gif", writer='pillow', fps=25)
+    plt.show()
+
+    ### plot input torques ###
+    t = np.linspace(0, T, N+1)
+    plt.plot(t[:-1], U[0,:], label='U1')
+    plt.plot(t[:-1], U[1,:], label='U2')
+    plt.plot(t[:-1], U[2,:], label='U3')
+    plt.plot(t[:-1], U[3,:], label='U4')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Input torques [Nm]')
+    plt.title(f'Input Torques for Initial Problem Statement')
+    plt.legend()
+    plt.show()
+
+
