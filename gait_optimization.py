@@ -106,11 +106,6 @@ def optimizer(N, L, T, ratio = 0.5, initial_guess = None):
     opti.solver('ipopt')
     sol = opti.solve()
 
-    # save values for Q, U and E (if needed in next optimization)
-    np.save('Q.npy', sol.value(Q))
-    np.save('U.npy', sol.value(U))
-    np.save('E.npy', sol.value(E))
-
     return sol.value(Q), sol.value(U), sol.value(E)
 
 
@@ -125,7 +120,7 @@ if __name__ == "__main__":
     L = 0.75 
     T = 1.0
     ratio = 0.5
-    initial_guess = np.load('guessQ.npy')
+    initial_guess = np.load('gait_optimization_results/guessQ.npy')
     filename = 'name'
 
     # run optimizer
