@@ -15,15 +15,12 @@ import matplotlib.patches as patches
 
 def optimizer(N, L, T, ratio = 0.5, initial_guess = None):
     # imports from Lagrangian_equations
-    T, V, M, C, B, x, xd = lag_eq(ratio)
+    _, V, M, C, B, x, xd = lag_eq(ratio)
     x_G1, y_G1, x_G2, y_G2, x_G3, y_G3, x_G4, y_G4, x_G5, y_G5, x_B, y_B, x_C, y_C, x_D, y_D, x_E, y_E, x_F, y_F = x
     x_G1_d, y_G1_d, x_G2_d, y_G2_d, x_G3_d, y_G3_d, x_G4_d, y_G4_d, x_G5_d, y_G5_d, x_B_d, y_B_d, x_C_d, y_C_d, x_D_d, y_D_d, x_E_d, y_E_d, x_F_d, y_F_d = xd 
     
     # Set up the problem
     opti = ca.Opti()
-    N = 100
-    L = 0.75
-    T = 1.0
 
     # Declare the decision variables, Q = [q, q_d] = coordinates, U = input torques
     Q = opti.variable(10, N+1) 
@@ -65,31 +62,31 @@ def optimizer(N, L, T, ratio = 0.5, initial_guess = None):
     # BC2: Result of heelstrike at the end equals the start of the step
     opti.subject_to(Q[:, 0] == heelstrike_casadi(M, Q[:5, -1], Q[5:, -1]))
 
-    # BC3: postion of all joints above ground at all times
-    opti.subject_to(y_E(Q[:5, :]) > 0.0)
-    opti.subject_to(y_B(Q[:5, :]) > 0.0)
-    opti.subject_to(y_C(Q[:5, :]) > 0.0)
-    opti.subject_to(y_D(Q[:5, :]) > 0.0)
-    opti.subject_to(y_F(Q[:5, :]) > 0.0)
+    # # BC3: postion of all joints above ground at all times
+    # opti.subject_to(y_E(Q[:5, :]) > 0.0)
+    # opti.subject_to(y_B(Q[:5, :]) > 0.0)
+    # opti.subject_to(y_C(Q[:5, :]) > 0.0)
+    # opti.subject_to(y_D(Q[:5, :]) > 0.0)
+    # opti.subject_to(y_F(Q[:5, :]) > 0.0)
 
-    # BC4: no overextended knees (Q3 and Q4)
-    opti.subject_to(Q[2, :] <= 0.0)
-    opti.subject_to(Q[3, :] <= 0.0)
-    opti.subject_to(Q[2, :] >= -np.pi/2)
-    opti.subject_to(Q[3, :] >= -np.pi/2)
+    # # BC4: no overextended knees (Q3 and Q4)
+    # opti.subject_to(Q[2, :] <= 0.0)
+    # opti.subject_to(Q[3, :] <= 0.0)
+    # opti.subject_to(Q[2, :] >= -np.pi/2)
+    # opti.subject_to(Q[3, :] >= -np.pi/2)
 
-    # BC5: do not hit stond with any joint
-    opti.subject_to((x_E(Q[:5,:]) - 0.3)**2 + y_E(Q[:5,:])**2 > 0.2**2)
-    opti.subject_to((x_B(Q[:5,:]) - 0.3)**2 + y_B(Q[:5,:])**2 > 0.2**2)
-    opti.subject_to((x_C(Q[:5,:]) - 0.3)**2 + y_C(Q[:5,:])**2 > 0.2**2)
-    opti.subject_to((x_D(Q[:5,:]) - 0.3)**2 + y_D(Q[:5,:])**2 > 0.2**2)
-    opti.subject_to((x_F(Q[:5,:]) - 0.3)**2 + y_F(Q[:5,:])**2 > 0.2**2)
+    # # BC5: do not hit stond with any joint
+    # opti.subject_to((x_E(Q[:5,:]) - 0.3)**2 + y_E(Q[:5,:])**2 > 0.2**2)
+    # opti.subject_to((x_B(Q[:5,:]) - 0.3)**2 + y_B(Q[:5,:])**2 > 0.2**2)
+    # opti.subject_to((x_C(Q[:5,:]) - 0.3)**2 + y_C(Q[:5,:])**2 > 0.2**2)
+    # opti.subject_to((x_D(Q[:5,:]) - 0.3)**2 + y_D(Q[:5,:])**2 > 0.2**2)
+    # opti.subject_to((x_F(Q[:5,:]) - 0.3)**2 + y_F(Q[:5,:])**2 > 0.2**2)
    
 
     ### initial guess ##
     if initial_guess is None:
         initial_guess = np.ones(10) 
-        initial_guess[4] = 0.1
+        # initial_guess[4] = 0.1
 
     opti.set_initial(Q[0, :], initial_guess[0] )
     opti.set_initial(Q[1, :], initial_guess[1] )
@@ -117,10 +114,11 @@ def optimizer(N, L, T, ratio = 0.5, initial_guess = None):
 if __name__ == "__main__":
     # parameters
     N = 100
-    L = 0.75 
-    T = 1.0
+    L = 0.79
+    T = 0.5
     ratio = 0.5
-    initial_guess = np.load('gait_optimization_results/guessQ.npy')
+    # initial_guess = np.load('gait_optimization_results/guessQ.npy')
+    initial_guess = None
     filename = 'name'
 
     # run optimizer
@@ -130,8 +128,6 @@ if __name__ == "__main__":
     np.save('gait_optimization_results/' + filename + '_Q' + '.npy', Q)
     np.save('gait_optimization_results/' + filename + '_U' + '.npy', U)
     np.save('gait_optimization_results/' + filename + '_E' + '.npy', E)
-
-    Q = np.load('gait_optimization_results/' + filename + '_Q' + '.npy')
 
 
 
@@ -158,8 +154,8 @@ if __name__ == "__main__":
 
     fig, ax = plt.subplots(1, 1)
 
-    circle = patches.Circle((0.3, 0), 0.2, fill=True, color='black')
-    ax.add_patch(circle)
+    # circle = patches.Circle((0.3, 0), 0.2, fill=True, color='black')
+    # ax.add_patch(circle)
 
     ax.set_aspect('equal')
 
