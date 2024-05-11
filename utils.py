@@ -1,8 +1,10 @@
+# imports
 import numpy as np
 import json
 import matplotlib.pyplot as plt
 from matplotlib import animation
 import datetime
+import casadi as ca
 
 
 with open('parameters.json') as f:
@@ -67,6 +69,14 @@ def heelstrike(M, q_min, q_d_min):
     m_plus = M(q_plus)
     q_d_plus = np.linalg.solve(m_plus, m_min @ q_d_min)
     return q_plus, q_d_plus
+
+def heelstrike_casadi(M, q_min, q_d_min):
+    q_plus = ca.vertcat(q_min[1], q_min[0], q_min[3], q_min[2], q_min[4])
+    m_min = M(q_min)
+    m_plus = M(q_plus)
+    q_d_plus = ca.solve(m_plus, m_min @ q_d_min)
+    return ca.vertcat(q_plus[0], q_plus[1], q_plus[2], q_plus[3], q_plus[4], 
+                      q_d_plus[0], q_d_plus[1], q_d_plus[2], q_d_plus[3], q_d_plus[4])
 
 # plot T, V and E
 def plot_energy(t, ans, T, V):

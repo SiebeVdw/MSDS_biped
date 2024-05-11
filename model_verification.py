@@ -15,7 +15,8 @@ from utils import *
 import numpy as np
 
 #%% T, V, M and C (numerical casadi functions) are imported from Lagrangian_equations.py
-from Lagrangian_equations import T, V, M, C
+from Lagrangian_equations import lag_eq
+T, V, M, C, B, x, xd = lag_eq()
 
 #%% solve the equations of motion, heelstrike included
 
