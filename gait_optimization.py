@@ -76,11 +76,11 @@ def optimizer(N, L, T, ratio = 0.5, initial_guess = None):
     # opti.subject_to(Q[3, :] >= -np.pi/2)
 
     # # BC5: do not hit stond with any joint
-    # opti.subject_to((x_E(Q[:5,:]) - 0.3)**2 + y_E(Q[:5,:])**2 > 0.2**2)
-    # opti.subject_to((x_B(Q[:5,:]) - 0.3)**2 + y_B(Q[:5,:])**2 > 0.2**2)
-    # opti.subject_to((x_C(Q[:5,:]) - 0.3)**2 + y_C(Q[:5,:])**2 > 0.2**2)
-    # opti.subject_to((x_D(Q[:5,:]) - 0.3)**2 + y_D(Q[:5,:])**2 > 0.2**2)
-    # opti.subject_to((x_F(Q[:5,:]) - 0.3)**2 + y_F(Q[:5,:])**2 > 0.2**2)
+    opti.subject_to((x_E(Q[:5,:]) - 0.3)**2 + y_E(Q[:5,:])**2 > 0.2**2)
+    opti.subject_to((x_B(Q[:5,:]) - 0.3)**2 + y_B(Q[:5,:])**2 > 0.2**2)
+    opti.subject_to((x_C(Q[:5,:]) - 0.3)**2 + y_C(Q[:5,:])**2 > 0.2**2)
+    opti.subject_to((x_D(Q[:5,:]) - 0.3)**2 + y_D(Q[:5,:])**2 > 0.2**2)
+    opti.subject_to((x_F(Q[:5,:]) - 0.3)**2 + y_F(Q[:5,:])**2 > 0.2**2)
    
 
     ### initial guess ##
@@ -117,9 +117,9 @@ if __name__ == "__main__":
     L = 0.79
     T = 0.5
     ratio = 0.5
-    # initial_guess = np.load('gait_optimization_results/guessQ.npy')
-    initial_guess = None
-    filename = 'no_overextended_knees'
+    initial_guess = np.load('gait_optimization_results/guessQ.npy')
+    # initial_guess = None
+    filename = 'stone'
 
     # run optimizer
     # Q, U, E = optimizer(N, L, T, ratio, initial_guess)
@@ -128,7 +128,6 @@ if __name__ == "__main__":
     # np.save('gait_optimization_results/' + filename + '_Q' + '.npy', Q)
     # np.save('gait_optimization_results/' + filename + '_U' + '.npy', U)
     # np.save('gait_optimization_results/' + filename + '_E' + '.npy', E)
-
     Q = np.load('gait_optimization_results/' + filename + '_Q' + '.npy')
     U = np.load('gait_optimization_results/' + filename + '_U' + '.npy')
     E = np.load('gait_optimization_results/' + filename + '_E' + '.npy')
@@ -156,8 +155,8 @@ if __name__ == "__main__":
 
     fig, ax = plt.subplots(1, 1)
 
-    # circle = patches.Circle((0.3, 0), 0.2, fill=True, color='black')
-    # ax.add_patch(circle)
+    circle = patches.Circle((0.3, 0), 0.2, fill=True, color='black')
+    ax.add_patch(circle)
 
     ax.set_aspect('equal')
 
@@ -190,7 +189,7 @@ if __name__ == "__main__":
     plt.plot(t[:-1], U[3,:], label='U4')
     plt.xlabel('Time [s]')
     plt.ylabel('Input torques [Nm]')
-    plt.title(f'Input Torques for Initial Problem Statement')
+    plt.title(f'Input Torques for not touching a stone')
     plt.legend()
     plt.show()
 
