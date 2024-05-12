@@ -15,12 +15,17 @@ This repository includes several scripts and files essential for modeling, simul
 
 ### Scripts and Files
 
-- **`langrangian_equations.py`**: Contains the Lagrangian equations of motion for the biped system.
+#### Main files
 - **`model_verification.py`**: Implements verification of the kinematic model through dynamic visualization and simulation tests.
-- **`parameters.json`**: Stores adjustable configuration parameters such as limb lengths and mass distributions.
-- **`utils.py`**: Provides utility functions for model simulations and data handling.
-- **`optimization.py`**: Contains the co-optimization routines executed via CasADi for enhancing the walker's energy efficiency.
+- **`gait_optimization.py`**: Implements gait optimization and nested optimization
+- **`simultaneous_optimization.py`**: Implements the simultaneous optimization
 
+#### Help files
+- **`langrangian_equations.py`**: Contains the Lagrangian equations of motion for the biped system.
+- **`langrangian_equations_simultaneous_optimization.py`**: Contains the Lagrangian equations of motion for the biped system with ratio as a variable for the simultaneous optimization
+- **`utils.py`**: Provides utility functions for model simulations and data handling.
+- **`parameters.json`**: Stores adjustable configuration parameters such as limb lengths and mass distributions.
+  
 ## Getting Started
 Follow these steps to run the simulations and optimization routines:
 
