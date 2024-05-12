@@ -1,3 +1,8 @@
+"""
+This file contains some useful functions for the project.
+
+"""
+
 # imports
 import numpy as np
 import json
@@ -74,6 +79,14 @@ def heelstrike_casadi(M, q_min, q_d_min):
     q_plus = ca.vertcat(q_min[1], q_min[0], q_min[3], q_min[2], q_min[4])
     m_min = M(q_min)
     m_plus = M(q_plus)
+    q_d_plus = ca.solve(m_plus, m_min @ q_d_min)
+    return ca.vertcat(q_plus[0], q_plus[1], q_plus[2], q_plus[3], q_plus[4], 
+                      q_d_plus[0], q_d_plus[1], q_d_plus[2], q_d_plus[3], q_d_plus[4])
+
+def heelstrike_casadi_cooptimization(M, q_min, q_d_min, R):
+    q_plus = ca.vertcat(q_min[1], q_min[0], q_min[3], q_min[2], q_min[4])
+    m_min = M(q_min, R)
+    m_plus = M(q_plus, R)
     q_d_plus = ca.solve(m_plus, m_min @ q_d_min)
     return ca.vertcat(q_plus[0], q_plus[1], q_plus[2], q_plus[3], q_plus[4], 
                       q_d_plus[0], q_d_plus[1], q_d_plus[2], q_d_plus[3], q_d_plus[4])
